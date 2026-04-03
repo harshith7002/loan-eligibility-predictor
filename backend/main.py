@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 import os
 
-# ── Initialize FastAPI app ──────────────────────────────────────────────
+# Initialize FastAPI app 
 app = FastAPI(title="Loan Eligibility Predictor API", version="1.0.0")
 
-# ── Allow React frontend to talk to this backend ────────────────────────
+#Allow React frontend to talk to this backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],  # Vite + CRA ports
@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Load the trained model and feature names ────────────────────────────
+#Load the trained model and feature names
 # Make sure model.pkl and feature_names.pkl are in the same folder as main.py
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model.pkl")
 FEATURES_PATH = os.path.join(os.path.dirname(__file__), "feature_names.pkl")
@@ -33,7 +33,7 @@ except FileNotFoundError as e:
     model = None
     feature_names = []
 
-# ── Input schema — exactly what the React form will send ───────────────
+#Input schema — exactly what the React form will send
 class LoanApplication(BaseModel):
     Gender: str           # "Male" or "Female"
     Married: str          # "Yes" or "No"
@@ -47,12 +47,12 @@ class LoanApplication(BaseModel):
     Credit_History: float  # 1.0 = good history, 0.0 = bad
     Property_Area: str    # "Urban", "Semiurban", "Rural"
 
-# ── Health check endpoint ───────────────────────────────────────────────
+#Health check endpoint
 @app.get("/")
 def root():
     return {"message": "Loan Predictor API is running!", "model_loaded": model is not None}
 
-# ── Main prediction endpoint ────────────────────────────────────────────
+# Main prediction endpoint
 @app.post("/predict")
 def predict(application: LoanApplication):
     if model is None:
